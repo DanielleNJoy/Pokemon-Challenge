@@ -6,11 +6,13 @@ class PokeFetch extends Component {
   constructor() {
     super()
     this.state = {
+      timeLeft: 10,
       pokeInfo: '',
       pokeSprite: '',
       pokeName: '',
     }
   }
+  
 
   fetchPokemon() {
     let min = Math.ceil(1);
@@ -29,12 +31,28 @@ class PokeFetch extends Component {
       .catch((err) => console.log(err))
   }
 
+  componentDidMount(){
+    this.interval = setInterval(
+        () => this.setState({
+            timeLeft: this.state.timeLeft - 1
+        }), 1000)
+}
+
+componentDidUpdate(prevProps, prevState){
+    if (prevState.timeLeft == 1){
+        clearInterval(this.interval)
+    }
+}
+
+componentWillUnmount(){
+    clearInterval(this.interval)
+}
+
   render() {
-    this.fetchPokemon()
     return (
       <div className={'wrapper'}>
-        {/* <button className={'start'} onClick={() => this.fetchPokemon()}>Start!</button> */}
-        <h1 className={'timer'} >Timer Display</h1>
+        <button className={'start'} onClick={() => this.fetchPokemon()}>Start!</button>
+        <h1 className={'timer'} >{this.state.timeLeft}</h1>
         <div className={'pokeWrap'}>
           <img className={'pokeImg'} src={this.state.pokeSprite} />
           <h1 className={'pokeName'}>{this.state.pokeName}</h1>
